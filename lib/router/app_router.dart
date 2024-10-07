@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:talhadnad/model/user_model.dart';
 import 'package:talhadnad/src/screen/payment_page.dart';
+import 'package:talhadnad/src/screen/pending_payment.dart';
 import 'package:talhadnad/src/screen/profilePage_page.dart';
 import 'package:talhadnad/src/screen/profile_page.dart';
 import 'package:talhadnad/src/screen/reservation_page.dart';
@@ -76,6 +77,12 @@ GoRouter getRouter(UserModel userModel) {
         redirect: (context, state) => _guardRoute(context, state, userModel),
         builder: (context, state) => const ReservationPage(),
       ),
+      GoRoute(
+        path: '/pending-payment',
+        redirect: (context, state) => _guardRoute(context, state, userModel),
+        builder: (context, state) => const  PendingPaymentPage (),
+      ),
+      
       GoRoute(
         path: '/market',
         redirect: (context, state) => _guardRoute(context, state, userModel),
