@@ -8,6 +8,7 @@ import 'package:talhadnad/model/user_model.dart';
 import 'package:talhadnad/theme/talhadnad_theme.dart';
 import 'package:talhadnad/widgets/calendar.dart';
 import 'package:provider/provider.dart';
+import 'package:talhadnad/widgets/star_rating.dart';
 
 class MarketDetailPage extends StatefulWidget {
   final String id;
@@ -80,48 +81,49 @@ class _MarketDetailPageState extends State<MarketDetailPage> {
     }
 
     return Scaffold(
-      backgroundColor: Color(0xFFf0f1f3),
-      appBar: AppBar(
-        backgroundColor: Color(0xFFf0f1f3),
-        title: Row(
+      backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(90), // Adjust total height as needed
+        child: Column(
           children: [
-            Expanded(
-              child: Center(
-                child: Text(
-                  market!.name,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: const Color(0xFF14213D), // Oxford Blue color
-                      ),
-                  textAlign: TextAlign.center, // Center align
+            Container(
+              height: 30, // Height of the top navy bar
+              color: Color(0xFF1A2B47), // Dark blue color, adjust as needed
+            ),
+            AppBar(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              automaticallyImplyLeading: false,
+              title: Text(
+                'Market Detail',
+                style: TextStyle(
+                  color: Color(0xFF1A2B47), // Dark blue color for text
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Quicksand',
                 ),
               ),
-            ),
-            // Option Icon
-            IconButton(
-              iconSize: 35,
-              icon: const Icon(Icons.more_vert),
-              onPressed: () {},
+              leading: IconButton(
+                icon:
+                    Icon(Icons.arrow_back, color: Color(0xFF1A2B47), size: 32),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              actions: [
+                IconButton(
+                  icon:
+                      Icon(Icons.more_vert, color: Color(0xFF1A2B47), size: 32),
+                  onPressed: () {
+                    // Add functionality for the menu button
+                  },
+                ),
+              ],
             ),
           ],
         ),
       ),
       body: Stack(
         children: [
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Column(
-              children: [
-                const SizedBox(height: 24), // Space above the title
-                Container(
-                  color: Colors.white, // White background for title container
-                  height: 113,
-                  padding: const EdgeInsets.symmetric(vertical: 24),
-                ),
-              ],
-            ),
-          ),
+        
           // Main Content Scroll
           Padding(
             padding: const EdgeInsets.only(
@@ -183,9 +185,10 @@ class _MarketDetailPageState extends State<MarketDetailPage> {
                             // Ratings
                             const Row(
                               children: [
-                                Icon(Icons.star, color: Colors.amber),
-                                SizedBox(width: 4),
-                                Text('4.3 (238 ratings)'),
+                                StarRating(
+                                  rating: 4,
+                                  numRatings: 20,
+                                ),
                               ],
                             ),
                             const SizedBox(height: 8),
@@ -263,36 +266,55 @@ class _MarketDetailPageState extends State<MarketDetailPage> {
                             const SizedBox(height: 16),
                             // Calendar Widget
                             Text(
-                              'Kmutt Market Opener',
-                              style: Theme.of(context).textTheme.titleLarge,
+                              'KMUTT Market Opener',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(fontFamily: 'Quicksand'),
                             ),
                             const SizedBox(height: 8),
                             Container(
-                              decoration: BoxDecoration(
-                                color: Colors
-                                    .white, // White background for the calendar
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: CalendarWidget(
-                                onDateSelected: _onDateSelected,
-                              ),
-                            ),
+                                decoration: BoxDecoration(
+                                  color: Colors
+                                      .white, // White background for the calendar
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: CalendarWidget(
+                                  onDateSelected: (date) {
+                                    // Handle date selection
+                                    print("Selected date: $date");
+                                  },
+                                  marketCloseDates: marketCloseDates,
+                                )),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Navigate to the BookingPage for creating a new booking
-                          context.go('/market/${market!.id}/booking');
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          minimumSize: const Size(double.infinity, 50),
+                      const SizedBox(height: 12),
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            // Navigate to the BookingPage for creating a new booking
+                            context.go('/market/${market!.id}/booking');
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.teal,
+                            minimumSize: Size(
+                                MediaQuery.of(context).size.width * 0.4, 50),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  8), // Adjust this value to change the corner roundness
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
+                          ),
+                          child: const Text(
+                            'VIEW',
+                            style: TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.bold),
+                          ),
                         ),
-                        child: const Text('VIEW'),
-                      ),
+                      )
                     ],
                   ),
                 ),

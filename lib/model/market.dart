@@ -40,4 +40,6 @@ class Market {
       phone: json['phone'],
     );
   }
+
+  get rating => null;
 }
