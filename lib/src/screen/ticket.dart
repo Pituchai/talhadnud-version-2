@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+import 'package:barcode_widget/barcode_widget.dart';
+
 import 'package:ticket_widget/ticket_widget.dart';
+
+import '../../theme/talhadnad_theme.dart';
 
 class TicketPage extends StatelessWidget {
   TicketPage({Key? key}) : super(key: key);
@@ -9,12 +12,14 @@ class TicketPage extends StatelessWidget {
     'Market Name': 'KMUTT-Market',
     'Name': 'Pituchai Mitpakdee',
     'Slot': 'A-1',
-    'Book-Date': 'Jan 04, 2024',
-    'Time': '06:00 AM - 08:00 PM',
-    'Location': '126 Pracha Uthit Rd. Bang Mod Thung Khru Bangkok 10140 Thailand',
+    'Book-Date': '04 Oct 2024',
+    'Time': '06:00 A.M. - 20:00 P.M.',
+    'Location':
+        '126 Pracha Uthit Rd. Bang Mod Thung Khru Bangkok 10140 Thailand',
     'Type': 'Food-Product',
     'Price': '150 Baht',
     'Ref': 'fadsf213fafad',
+    'Status': 'Confirm'
   };
 
   @override
@@ -25,11 +30,12 @@ class TicketPage extends StatelessWidget {
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text('E-Ticket', style: TextStyle(color: Colors.black, fontFamily: 'Quicksand')),
+        title: Text('E-Ticket',
+            style: TextStyle(color: Colors.black, fontFamily: 'Quicksand')),
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      backgroundColor: Color(0xFF1A2B47),
+      backgroundColor: const Color.fromARGB(255, 5, 62, 85),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -38,37 +44,62 @@ class TicketPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 TicketWidget(
-                  width: MediaQuery.of(context).size.width * 0.9,
-                  height: MediaQuery.of(context).size.height * 0.75,
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  height:
+                   MediaQuery.of(context).size.height * 0.68,
                   isCornerRounded: true,
-                  padding: EdgeInsets.all(20),
+                  padding:
+                      EdgeInsets.only(left: 20, top: 20, right: 20, bottom: 10),
                   color: Colors.white,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Center(
-                          child: Text(
-                            ticketData['Market Name'] ?? '',
-                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, fontFamily: 'Quicksand'),
+                  child: Column(
+                    children: [
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.store,
+                            color: Color(0xFF36A690),
+                            size: 30,
                           ),
-                        ),
-                        SizedBox(height: 20),
-                        Center(child: _buildQRCode()),
-                        SizedBox(height: 20),
-                        Center(
-                          child: Text(
-                            'Please scan your QR Code at the market entrance.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.grey[600], fontSize: 12, fontFamily: 'Quicksand'),
+                          SizedBox(width: 10),
+                          Text(
+                            'Talhadnud',
+                            style: TextStyle(
+                              color: Color(0xFF36A690),
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Quicksand',
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 30),
-                        _buildTicketDetails(context),
-                      ],
-                    ),
+                        ],
+                      ),
+                         SizedBox(height: 15),
+                       _buildDashedLine(),
+                   
+                      SizedBox(height: 20),
+                      _buildInfoRow('Name', 'Price', context),
+                      SizedBox(height: 15),
+                      _buildInfoRow('Slot', 'Type', context),
+                      SizedBox(height: 15),
+                      _buildInfoRow('Book-Date', 'Time', context),
+                      SizedBox(height: 15),
+                      _buildInfoRow('Market Name', 'Ref', context),
+                      SizedBox(height: 15),
+                      _buildStatusWidget(),
+                      SizedBox(height: 30),
+                      _buildDashedLine(),
+                      SizedBox(height: 30),
+                      Center(
+                        child: Text("Show this to market space provider"),
+                      ),
+                      SizedBox(height: 20),
+                      _buildBarcode(context),
+
+                    ],
                   ),
                 ),
+                SizedBox(height: 20),
+                _buildLocationSection(context),
                 SizedBox(height: 20),
                 _buildButtonRow(),
               ],
@@ -79,67 +110,128 @@ class TicketPage extends StatelessWidget {
     );
   }
 
-  //kind like support feature,but less important 
-  Widget _buildQRCode() {
-    return QrImageView(
-      data: 'KMUTT-Market:${ticketData['Slot']}:${ticketData['Book-Date']}:${ticketData['Ref']}',
-      version: QrVersions.auto,
-      size: 150.0,
+  Widget _buildInfoRow(String leftKey, String rightKey, BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 2, // ลดลงจาก 3
+          child: _buildDetailColumn(leftKey, ticketData[leftKey] ?? '',
+              CrossAxisAlignment.start, TextAlign.left),
+        ),
+        Expanded(
+          flex: 3, // เพิ่มขึ้นจาก 2
+          child: _buildDetailColumn(rightKey, ticketData[rightKey] ?? '',
+              CrossAxisAlignment.end, TextAlign.right),
+        ),
+      ],
     );
   }
 
-  Widget _buildTicketDetails(BuildContext context) {
+  Widget _buildDetailColumn(String label, String value,
+      CrossAxisAlignment crossAlignment, TextAlign textAlign) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: ticketData.entries.where((entry) => entry.key != 'Market Name').map((entry) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 2,
-                child: Text(
-                  entry.key,
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12, fontFamily: 'Quicksand'),
-                ),
-              ),
-              Expanded(
-                flex: 3,
-                child: _buildWrappedText(entry.value),
-              ),
-            ],
+      crossAxisAlignment: crossAlignment,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.grey[600],
+            fontSize: 12, // ลดลงจาก 14
+            fontFamily: 'Quicksand',
           ),
-        );
-      }).toList(),
+          textAlign: textAlign,
+        ),
+        SizedBox(height: 2),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 14, // ลดลงจาก 16
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Quicksand',
+          ),
+          textAlign: textAlign,
+        ),
+      ],
     );
   }
 
-  Widget _buildWrappedText(String text) {
-    List<String> words = text.split(' ');
-    String currentLine = '';
-    List<String> lines = [];
+  Widget _buildStatusWidget() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.green[100],
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        'Status: ${ticketData['Status']}',
+        style: TextStyle(
+          color: Colors.green[800],
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          fontFamily: 'Quicksand',
+        ),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
 
-    for (String word in words) {
-      if (currentLine.isEmpty) {
-        currentLine = word;
-      } else if ((currentLine + ' ' + word).length <= 30) {
-        currentLine += ' ' + word;
-      } else {
-        lines.add(currentLine);
-        currentLine = word;
-      }
-    }
-    if (currentLine.isNotEmpty) {
-      lines.add(currentLine);
-    }
+  //barcode still not show barcodeData
+  Widget _buildBarcode(BuildContext context) {
+    final barcodeData =
+        'KMUTT-Market:${ticketData['Slot']}:${ticketData['Book-Date']}:${ticketData['Ref']}';
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.7,
+      height: 70,
+      child: BarcodeWidget(
+        barcode: Barcode.code128(),
+        data: barcodeData,
+        width: double.infinity,
+        height:double.infinity ,
+        drawText: false,
+      ),
+    );
+  }
 
+  Widget _buildDashedLine() {
+    return Container(
+      height: 1,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (context, index) {
+          return Container(
+            width: 5,
+            height: 1,
+            color: index % 2 == 0 ? Colors.grey : Colors.transparent,
+          );
+        },
+        itemCount: 100, // Adjust based on screen width
+      ),
+    );
+  }
+
+  Widget _buildLocationSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: lines.map((line) => Text(
-        line,
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, fontFamily: 'Quicksand'),
-      )).toList(),
+      children: [
+        Text('Your Market location',
+            style: TextStyle(
+                color: Colors.white, fontSize: 18, fontFamily: 'Quicksand')),
+        SizedBox(height: 20),
+        Container(
+          height: MediaQuery.of(context).size.height * 0.15,
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Center(
+            child: Icon(Icons.map,
+                size: MediaQuery.of(context).size.width * 0.15,
+                color: Colors.grey[600]),
+          ),
+        ),
+      ],
     );
   }
 
@@ -148,9 +240,13 @@ class TicketPage extends StatelessWidget {
       children: [
         Expanded(
           child: ElevatedButton(
-            child: Text('Chat with us', style: TextStyle(fontSize: 16, fontFamily: 'Quicksand', color: Colors.white)),
+            child: Text('Chat with us',
+                style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Quicksand',
+                    color: Colors.white)),
             onPressed: () {
-              // Implement cancel booking functionality
+              // Implement chat functionality
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
@@ -161,10 +257,14 @@ class TicketPage extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(width: 10), // Add some space between the buttons
+        SizedBox(width: 10),
         Expanded(
           child: ElevatedButton(
-            child: Text('Back to Market', style: TextStyle(fontSize: 16, fontFamily: 'Quicksand', color: Colors.black)),
+            child: Text('Back to Market',
+                style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Quicksand',
+                    color: Colors.black)),
             onPressed: () {
               // Implement navigation functionality
             },
