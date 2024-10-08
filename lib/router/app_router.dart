@@ -14,6 +14,7 @@ import 'package:talhadnad/src/screen/register_page.dart';
 import 'package:talhadnad/src/screen/market_page.dart';
 import 'package:talhadnad/src/screen/market_product.dart';
 import 'package:talhadnad/model/slot.dart';
+import 'package:talhadnad/src/screen/ticket.dart';
 
 String? _guardRoute(
     BuildContext context, GoRouterState state, UserModel userModel) {
@@ -69,7 +70,8 @@ GoRouter getRouter(UserModel userModel) {
         builder: (context, state) {
           final selectedSlot = state.uri.queryParameters['selectedSlot'] ?? '';
           final selectedDate = state.uri.queryParameters['selectedDate'] ?? '';
-          return PaymentPage(selectedSlot: selectedSlot, selectedDate: selectedDate);
+          return PaymentPage(
+              selectedSlot: selectedSlot, selectedDate: selectedDate);
         },
       ),
       GoRoute(
@@ -80,9 +82,15 @@ GoRouter getRouter(UserModel userModel) {
       GoRoute(
         path: '/pending-payment',
         redirect: (context, state) => _guardRoute(context, state, userModel),
-        builder: (context, state) => const  PendingPaymentPage (),
+        builder: (context, state) => const PendingPaymentPage(),
+      ),
+      GoRoute(
+        path: '/ticket',
+        redirect: (context, state) => _guardRoute(context, state, userModel),
+        builder: (context, state) =>  TicketPage(),
       ),
       
+    
       GoRoute(
         path: '/market',
         redirect: (context, state) => _guardRoute(context, state, userModel),
