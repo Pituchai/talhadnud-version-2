@@ -125,198 +125,194 @@ class _MarketDetailPageState extends State<MarketDetailPage> {
         children: [
         
           // Main Content Scroll
-          Padding(
-            padding: const EdgeInsets.only(
-                top: 113.0), // Padding based on header height
-            child: SingleChildScrollView(
-              child: Container(
-                color: Colors.white, // Main content background
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Carousel Slider
-                      // CarouselSlider(
-                      //   options: CarouselOptions(
-                      //     height: 200,
-                      //     autoPlay: true,
-                      //     enlargeCenterPage: true,
-                      //     viewportFraction: 1.0,
-                      //     aspectRatio: 16 / 9,
-                      //     autoPlayInterval: const Duration(seconds: 3),
-                      //   ),
-                      //   items: market?.image
-                      //       .map((image) => Image.network(
-                      //             image,
-                      //             fit: BoxFit.cover,
-                      //           ))
-                      //       .toList(),
-                      // ),
-
-                      // Market Information
-                      Container(
-                        color: Colors
-                            .white, // White background for the grouped container
-                        padding:
-                            const EdgeInsets.all(16.0), // Padding for spacing
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Market Name
-                            Text(
-                              market!.name,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelLarge
-                                  ?.copyWith(
-                                    color:
-                                        mountainMeadow, // Ensure mountainMeadow is defined
-                                    fontSize: 24,
+          SingleChildScrollView(
+            child: Container(
+              color: Colors.white, // Main content background
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Carousel Slider
+                    // CarouselSlider(
+                    //   options: CarouselOptions(
+                    //     height: 200,
+                    //     autoPlay: true,
+                    //     enlargeCenterPage: true,
+                    //     viewportFraction: 1.0,
+                    //     aspectRatio: 16 / 9,
+                    //     autoPlayInterval: const Duration(seconds: 3),
+                    //   ),
+                    //   items: market?.image
+                    //       .map((image) => Image.network(
+                    //             image,
+                    //             fit: BoxFit.cover,
+                    //           ))
+                    //       .toList(),
+                    // ),
+          
+                    // Market Information
+                    Container(
+                      color: Colors
+                          .white, // White background for the grouped container
+                      padding:
+                          const EdgeInsets.all(16.0), // Padding for spacing
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Market Name
+                          Text(
+                            market!.name,
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelLarge
+                                ?.copyWith(
+                                  color:
+                                      mountainMeadow, // Ensure mountainMeadow is defined
+                                  fontSize: 24,
+                                ),
+                          ),
+                          const SizedBox(height: 8),
+                          // Market Description
+                          Text(
+                            market!.description,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          const SizedBox(height: 8),
+                          // Ratings
+                          const Row(
+                            children: [
+                              StarRating(
+                                rating: 4,
+                                numRatings: 20,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          // Phone
+                          const Row(
+                            children: [
+                              Icon(Icons.phone),
+                              SizedBox(width: 8),
+                              Text(
+                                  "23123134"), // Replace with actual phone number
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          // Address
+                          Row(
+                            children: [
+                              const Icon(Icons.location_on),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(market!.address),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          // Map Placeholder
+                          Container(
+                            height: 150,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey[300]!),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    color: Colors.grey[200],
                                   ),
+                                  const Center(
+                                    child: Icon(
+                                      Icons.map,
+                                      size: 50,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    bottom: 8,
+                                    right: 8,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(4),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(2),
+                                      ),
+                                      child: const Text(
+                                        'Google',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            const SizedBox(height: 8),
-                            // Market Description
-                            Text(
-                              market!.description,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            const SizedBox(height: 8),
-                            // Ratings
-                            const Row(
-                              children: [
-                                StarRating(
-                                  rating: 4,
-                                  numRatings: 20,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            // Phone
-                            const Row(
-                              children: [
-                                Icon(Icons.phone),
-                                SizedBox(width: 8),
-                                Text(
-                                    "23123134"), // Replace with actual phone number
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            // Address
-                            Row(
-                              children: [
-                                const Icon(Icons.location_on),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(market!.address),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            // Map Placeholder
-                            Container(
-                              height: 150,
+                          ),
+                          const SizedBox(height: 16),
+                          // Divider
+                          const Divider(
+                            color: Colors.black,
+                            thickness: 2,
+                          ),
+                          const SizedBox(height: 16),
+                          // Calendar Widget
+                          Text(
+                            'KMUTT Market Opener',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(fontFamily: 'Quicksand'),
+                          ),
+                          const SizedBox(height: 8),
+                          Container(
                               decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]!),
+                                color: Colors
+                                    .white, // White background for the calendar
+                                border: Border.all(color: Colors.grey),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Stack(
-                                  children: [
-                                    Container(
-                                      color: Colors.grey[200],
-                                    ),
-                                    const Center(
-                                      child: Icon(
-                                        Icons.map,
-                                        size: 50,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                    Positioned(
-                                      bottom: 8,
-                                      right: 8,
-                                      child: Container(
-                                        padding: const EdgeInsets.all(4),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(2),
-                                        ),
-                                        child: const Text(
-                                          'Google',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            // Divider
-                            const Divider(
-                              color: Colors.black,
-                              thickness: 2,
-                            ),
-                            const SizedBox(height: 16),
-                            // Calendar Widget
-                            Text(
-                              'KMUTT Market Opener',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(fontFamily: 'Quicksand'),
-                            ),
-                            const SizedBox(height: 8),
-                            Container(
-                                decoration: BoxDecoration(
-                                  color: Colors
-                                      .white, // White background for the calendar
-                                  border: Border.all(color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: CalendarWidget(
-                                  onDateSelected: (date) {
-                                    // Handle date selection
-                                    print("Selected date: $date");
-                                  },
-                                  marketCloseDates: marketCloseDates,
-                                )),
-                          ],
+                              child: CalendarWidget(
+                                onDateSelected: (date) {
+                                  // Handle date selection
+                                  print("Selected date: $date");
+                                },
+                                marketCloseDates: marketCloseDates,
+                              )),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Navigate to the BookingPage for creating a new booking
+                          context.go('/market/${market!.id}/booking');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          minimumSize: Size(
+                              MediaQuery.of(context).size.width * 0.4, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                8), // Adjust this value to change the corner roundness
+                          ),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                        ),
+                        child: const Text(
+                          'VIEW',
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      Center(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // Navigate to the BookingPage for creating a new booking
-                            context.go('/market/${market!.id}/booking');
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.teal,
-                            minimumSize: Size(
-                                MediaQuery.of(context).size.width * 0.4, 50),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  8), // Adjust this value to change the corner roundness
-                            ),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 10),
-                          ),
-                          child: const Text(
-                            'VIEW',
-                            style: TextStyle(
-                                fontSize: 24, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
+                    )
+                  ],
                 ),
               ),
             ),
