@@ -1,6 +1,3 @@
-// market_detail_page.dart
-
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:talhadnad/model/market.dart';
@@ -8,11 +5,12 @@ import 'package:talhadnad/model/user_model.dart';
 import 'package:talhadnad/theme/talhadnad_theme.dart';
 import 'package:talhadnad/widgets/calendar.dart';
 import 'package:provider/provider.dart';
+import 'package:talhadnad/widgets/kmutt_map.dart';
 import 'package:talhadnad/widgets/star_rating.dart';
 
 class MarketDetailPage extends StatefulWidget {
   final String id;
-  const MarketDetailPage({required this.id, super.key});
+  const MarketDetailPage({required this.id, Key? key}) : super(key: key);
 
   @override
   State<MarketDetailPage> createState() => _MarketDetailPageState();
@@ -23,6 +21,15 @@ class _MarketDetailPageState extends State<MarketDetailPage> {
   bool isLoading = true;
   String? errorMessage;
   DateTime? selectedDate;
+  late Map<String, String> selectedLocation;
+
+  // Mock data for market locations
+  final List<Map<String, String>> mockLocations = [
+    {'name': 'KMUTT', 'latitude': '13.650329', 'longitude': '100.495503'},
+    {'name': 'CentralWorld', 'latitude': '13.7470', 'longitude': '100.5392'},
+    {'name': 'Chatuchak', 'latitude': '13.7999', 'longitude': '100.5502'},
+  ];
+  //13.650329, 100.495503
 
   @override
   void initState() {
@@ -33,9 +40,11 @@ class _MarketDetailPageState extends State<MarketDetailPage> {
   Future<void> loadMarketDetail() async {
     try {
       final userModel = Provider.of<UserModel>(context, listen: false);
-      market = await userModel.getMarketById(widget.id);
+      final loadedMarket = await userModel.getMarketById(widget.id);
       setState(() {
+        market = loadedMarket;
         isLoading = false;
+        selectedLocation = mockLocations[DateTime.now().microsecond % mockLocations.length];
       });
     } catch (e) {
       setState(() {
@@ -54,16 +63,12 @@ class _MarketDetailPageState extends State<MarketDetailPage> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (errorMessage != null || market == null) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Market Detail'),
-        ),
+        appBar: AppBar(title: const Text('Market Detail')),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -82,242 +87,165 @@ class _MarketDetailPageState extends State<MarketDetailPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(90), // Adjust total height as needed
-        child: Column(
-          children: [
-            Container(
-              height: 30, // Height of the top navy bar
-              color: Color(0xFF1A2B47), // Dark blue color, adjust as needed
-            ),
-            AppBar(
-              backgroundColor: Colors.white,
-              elevation: 0,
-              automaticallyImplyLeading: false,
-              title: Text(
-                'Market Detail',
-                style: TextStyle(
-                  color: Color(0xFF1A2B47), // Dark blue color for text
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Quicksand',
-                ),
-              ),
-              leading: IconButton(
-                icon:
-                    Icon(Icons.arrow_back, color: Color(0xFF1A2B47), size: 32),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-              actions: [
-                IconButton(
-                  icon:
-                      Icon(Icons.more_vert, color: Color(0xFF1A2B47), size: 32),
-                  onPressed: () {
-                    // Add functionality for the menu button
-                  },
-                ),
-              ],
-            ),
-          ],
+      appBar: _buildAppBar(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildMarketInfo(),
+              const SizedBox(height: 16),
+              _buildMap(),
+              const SizedBox(height: 16),
+              const Divider(color: Colors.black, thickness: 2),
+              const SizedBox(height: 16),
+              _buildCalendar(),
+              const SizedBox(height: 12),
+              _buildViewButton(),
+            ],
+          ),
         ),
       ),
-      body: Stack(
+    );
+  }
+
+  PreferredSize _buildAppBar() {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(90),
+      child: Column(
         children: [
-        
-          // Main Content Scroll
-          SingleChildScrollView(
-            child: Container(
-              color: Colors.white, // Main content background
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Carousel Slider
-                    // CarouselSlider(
-                    //   options: CarouselOptions(
-                    //     height: 200,
-                    //     autoPlay: true,
-                    //     enlargeCenterPage: true,
-                    //     viewportFraction: 1.0,
-                    //     aspectRatio: 16 / 9,
-                    //     autoPlayInterval: const Duration(seconds: 3),
-                    //   ),
-                    //   items: market?.image
-                    //       .map((image) => Image.network(
-                    //             image,
-                    //             fit: BoxFit.cover,
-                    //           ))
-                    //       .toList(),
-                    // ),
-          
-                    // Market Information
-                    Container(
-                      color: Colors
-                          .white, // White background for the grouped container
-                      padding:
-                          const EdgeInsets.all(16.0), // Padding for spacing
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Market Name
-                          Text(
-                            market!.name,
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelLarge
-                                ?.copyWith(
-                                  color:
-                                      mountainMeadow, // Ensure mountainMeadow is defined
-                                  fontSize: 24,
-                                ),
-                          ),
-                          const SizedBox(height: 8),
-                          // Market Description
-                          Text(
-                            market!.description,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          const SizedBox(height: 8),
-                          // Ratings
-                          const Row(
-                            children: [
-                              StarRating(
-                                rating: 4,
-                                numRatings: 20,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          // Phone
-                          const Row(
-                            children: [
-                              Icon(Icons.phone),
-                              SizedBox(width: 8),
-                              Text(
-                                  "23123134"), // Replace with actual phone number
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          // Address
-                          Row(
-                            children: [
-                              const Icon(Icons.location_on),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(market!.address),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          // Map Placeholder
-                          Container(
-                            height: 150,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey[300]!),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Stack(
-                                children: [
-                                  Container(
-                                    color: Colors.grey[200],
-                                  ),
-                                  const Center(
-                                    child: Icon(
-                                      Icons.map,
-                                      size: 50,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  Positioned(
-                                    bottom: 8,
-                                    right: 8,
-                                    child: Container(
-                                      padding: const EdgeInsets.all(4),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(2),
-                                      ),
-                                      child: const Text(
-                                        'Google',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          // Divider
-                          const Divider(
-                            color: Colors.black,
-                            thickness: 2,
-                          ),
-                          const SizedBox(height: 16),
-                          // Calendar Widget
-                          Text(
-                            'KMUTT Market Opener',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge
-                                ?.copyWith(fontFamily: 'Quicksand'),
-                          ),
-                          const SizedBox(height: 8),
-                          Container(
-                              decoration: BoxDecoration(
-                                color: Colors
-                                    .white, // White background for the calendar
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: CalendarWidget(
-                                onDateSelected: (date) {
-                                  // Handle date selection
-                                  print("Selected date: $date");
-                                },
-                                marketCloseDates: marketCloseDates,
-                              )),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Navigate to the BookingPage for creating a new booking
-                          context.go('/market/${market!.id}/booking');
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          minimumSize: Size(
-                              MediaQuery.of(context).size.width * 0.4, 50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                8), // Adjust this value to change the corner roundness
-                          ),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                        ),
-                        child: const Text(
-                          'VIEW',
-                          style: TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
+          Container(
+            height: 30,
+            color: const Color(0xFF1A2B47),
+          ),
+          AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            automaticallyImplyLeading: false,
+            title: const Text(
+              'Market Detail',
+              style: TextStyle(
+                color: Color(0xFF1A2B47),
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Quicksand',
               ),
             ),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Color(0xFF1A2B47), size: 32),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.more_vert, color: Color(0xFF1A2B47), size: 32),
+                onPressed: () {
+                  // Add functionality for the menu button
+                },
+              ),
+            ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMarketInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          market!.name,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            color: mountainMeadow,
+            fontSize: 24,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          market!.description,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        const SizedBox(height: 8),
+        const StarRating(rating: 4, numRatings: 20),
+        const SizedBox(height: 8),
+        const Row(
+          children: [
+            Icon(Icons.phone),
+            SizedBox(width: 8),
+            Text("23123134"),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            const Icon(Icons.location_on),
+            const SizedBox(width: 8),
+            Expanded(child: Text(market!.address)),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMap() {
+    return Container(
+      height: 150,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey[300]!),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: MapKmutt(
+          latitude: double.parse(selectedLocation['latitude']!),
+          longitude: double.parse(selectedLocation['longitude']!),
+          title: selectedLocation['name']!,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCalendar() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'KMUTT Market Opener',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(fontFamily: 'Quicksand'),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: CalendarWidget(
+            onDateSelected: _onDateSelected,
+            marketCloseDates: [], // Replace with actual market close dates
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildViewButton() {
+    return Center(
+      child: ElevatedButton(
+        onPressed: () => context.go('/market/${market!.id}/booking'),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.teal,
+          minimumSize: Size(MediaQuery.of(context).size.width * 0.4, 50),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        ),
+        child: const Text(
+          'VIEW',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }

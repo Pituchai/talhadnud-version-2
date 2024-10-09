@@ -26,6 +26,10 @@ dependencies:
   qr_flutter: ^4.1.0
   ticket_widget: ^1.0.2
   barcode_widget: ^2.0.4
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  url_launcher: ^6.3.1
+  flutter_map_cancellable_tile_provider: ^3.0.2
 
 dev_dependencies:
   flutter_test:
