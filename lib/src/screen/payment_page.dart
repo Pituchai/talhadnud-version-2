@@ -40,7 +40,7 @@ class _PaymentPageState extends State<PaymentPage> {
         ),
         title: const Text(
           'Payment',
-          style: TextStyle(color: oxfordBlue, fontWeight: FontWeight.bold),
+          style: TextStyle(color: oxfordBlue, fontWeight: FontWeight.bold, fontFamily: 'Quicksand'),
         ),
         centerTitle: true,
       ),

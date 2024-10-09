@@ -49,7 +49,7 @@ class TicketPage extends StatelessWidget {
                   width: MediaQuery.of(context).size.width * 0.7,
                   height: MediaQuery.of(context).size.height * 0.68,
                   isCornerRounded: true,
-                  padding: const EdgeInsets.only(left: 20, top: 20, right: 20, bottom: 10),
+                  padding: const EdgeInsets.only(left: 25, top: 20, right: 25, bottom: 10),
                   color: Colors.white,
                   child: Column(
                     children: [

@@ -1,13 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-final List<String> marketCloseDates = [
-  "2024-10-17T00:00:00Z",
-  "2024-10-24T00:00:00Z",
-  "2024-10-01T00:00:00Z",
-  "2024-10-08T00:00:00Z",
-];
-
 class CalendarWidget extends StatefulWidget {
   final Function(DateTime) onDateSelected;
   final List<String> marketCloseDates;
@@ -23,17 +16,20 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   DateTime? _selectedDay;
 
   bool isDateClosed(DateTime date) {
-    String formattedDate = DateFormat("yyyy-MM-dd").format(date) + "T00:00:00Z";
-    return widget.marketCloseDates.contains(formattedDate);
+    return widget.marketCloseDates.any((closedDate) {
+      DateTime parsedDate = DateTime.parse(closedDate);
+      bool isClosed = date.year == parsedDate.year &&
+             date.month == parsedDate.month &&
+             date.day == parsedDate.day;
+     // print("Checking date: ${DateFormat("yyyy-MM-dd").format(date)}");
+      //print("Is closed: $isClosed");
+      return isClosed;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black),
-        borderRadius: BorderRadius.circular(9.5),
-      ),
       child: Column(
         children: [
           Container(
@@ -46,24 +42,6 @@ class _CalendarWidgetState extends State<CalendarWidget> {
             ),
             child: Column(
               children: [
-                  // Carousel Slider
-                      // CarouselSlider(
-                      //   options: CarouselOptions(
-                      //     height: 200,
-                      //     autoPlay: true,
-                      //     enlargeCenterPage: true,
-                      //     viewportFraction: 1.0,
-                      //     aspectRatio: 16 / 9,
-                      //     autoPlayInterval: const Duration(seconds: 3),
-                      //   ),
-                      //   items: market?.image
-                      //       .map((image) => Image.network(
-                      //             image,
-                      //             fit: BoxFit.cover,
-                      //           ))
-                      //       .toList(),
-                      // ),
-
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
@@ -155,7 +133,6 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                     }
                   },
                   child: Container(
-                    // margin: EdgeInsets.all(1),
                     decoration: BoxDecoration(
                       border: (_selectedDay != null && _selectedDay!.day == day)
                           ? Border.all(color: Color(0xFF36A690), width: 2)
@@ -169,7 +146,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Quicksand',
                           color: isClosed
-                              ? Colors.red
+                              ? Colors.red  
                               : (date.isAfter(DateTime.now())
                                   ? Colors.black
                                   : Colors.grey),

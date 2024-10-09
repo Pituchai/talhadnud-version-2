@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:talhadnad/model/user_model.dart';
+import 'package:talhadnad/src/screen/booking_history_page.dart';
 import 'package:talhadnad/src/screen/payment_page.dart';
 import 'package:talhadnad/src/screen/pending_payment.dart';
 import 'package:talhadnad/src/screen/profilePage_page.dart';
@@ -61,9 +62,10 @@ GoRouter getRouter(UserModel userModel) {
         path: '/profile',
         redirect: (context, state) => _guardRoute(context, state, userModel),
         builder: (context, state) {
-          return const ProfilePage();
+          return  ProfilePage();
         },
       ),
+      
       GoRoute(
         path: '/payment',
         redirect: (context, state) => _guardRoute(context, state, userModel),
@@ -89,7 +91,13 @@ GoRouter getRouter(UserModel userModel) {
         redirect: (context, state) => _guardRoute(context, state, userModel),
         builder: (context, state) =>  TicketPage(),
       ),
-      
+      GoRoute(
+        path: '/booking-history',
+        redirect: (context, state) => _guardRoute(context, state, userModel),
+        builder: (context, state) {
+          return BookingHistoryPage();
+        },
+      ),
     
       GoRoute(
         path: '/market',

@@ -1,105 +1,141 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:talhadnad/theme/talhadnad_theme.dart';
+import '../../widgets/BottomNavBar.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+  const ProfilePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: oxfordBlue, // Dark blue background
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(context), // Pass context to handle the "pop to home"
-            Expanded(
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
+      body: Column(
+        children: [
+          // Blue header section
+          Container(
+            color: oxfordBlue,
+            child: SafeArea(
+              bottom: false,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Center(
+                      child: Text(
+                        'Profile',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-                child: _buildProfileContent(
-                    context), // Updated to handle navigation
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 30,
+                          backgroundColor: Colors.grey[300],
+                          child: Icon(Icons.person, size: 40, color: Colors.grey[600]),
+                        ),
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Pituchai Mitpakdee',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                '+66 98 123 5786',
+                                style: TextStyle(color: Colors.white70),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () {
-              context.go('/'); // Navigate back to home
-            },
           ),
-          const Text(
-            'Profile',
-            style: TextStyle(
+          // White background for menu items
+          Expanded(
+            child: Container(
               color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 20),
+                child: ListView(
+                  children: [
+                    _buildMenuItem(
+                      'Booking History',
+                      Icons.calendar_today,
+                      () => context.push('/booking-history'),
+                    ),
+                    _buildMenuItem(
+                      'Wallet',
+                      Icons.account_balance_wallet,
+                      () => context.push('/wallet'),
+                    ),
+                    _buildMenuItem(
+                      'Refer & Earn',
+                      Icons.card_giftcard,
+                      () => context.push('/refer-earn'),
+                    ),
+                    _buildMenuItem(
+                      'Offers',
+                      Icons.local_offer,
+                      () => context.push('/offers'),
+                    ),
+                    _buildMenuItem(
+                      "FAQ's & Support",
+                      Icons.help_outline,
+                      () => context.push('/faq-support'),
+                    ),
+                    _buildMenuItem(
+                      'About Us',
+                      Icons.info_outline,
+                      () => context.push('/about-us'),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-            onPressed: () {/* TODO: Implement notification */},
           ),
         ],
       ),
+      bottomNavigationBar: const BottomNavBar(selectedIndex: 3),
     );
   }
 
-  Widget _buildProfileContent(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(20),
+  Widget _buildMenuItem(String title, IconData icon, VoidCallback onTap) {
+    return Column(
       children: [
-        const CircleAvatar(
-          radius: 50,
-          backgroundImage:
-              NetworkImage('https://example.com/profile_image.jpg'),
+        ListTile(
+          leading: Icon(icon, color: oxfordBlue),
+          title: Text(
+            title,
+            style: TextStyle(
+              fontFamily: 'Quicksand',
+              fontSize: 16,
+              color: oxfordBlue,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          trailing: Icon(Icons.chevron_right, color: oxfordBlue),
+          onTap: onTap,
         ),
-        const SizedBox(height: 20),
-        const Text(
-          'Kayal Vishi',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 5),
-        const Text(
-          '+1 6282 283 8324',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.grey),
-        ),
-        const SizedBox(height: 30),
-        _buildProfileMenuItem(Icons.bookmark, 'My Bookings', context),
-        _buildProfileMenuItem(Icons.account_balance_wallet, 'Wallet', context),
-        _buildProfileMenuItem(Icons.card_giftcard, 'Refer & Earn', context),
-        _buildProfileMenuItem(Icons.help_outline, 'Help & Support', context),
-        _buildProfileMenuItem(Icons.info_outline, 'About Us', context),
-        const SizedBox(height: 20),
+        Divider(height: 1, color: oxfordBlue.withOpacity(0.2)),
       ],
-    );
-  }
-
-  Widget _buildProfileMenuItem(
-      IconData icon, String title, BuildContext context) {
-    return ListTile(
-      leading: Icon(icon, color: const Color(0xFF1E2F4D)),
-      title: Text(title),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () {},
     );
   }
 }
